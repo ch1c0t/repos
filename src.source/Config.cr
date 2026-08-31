@@ -23,6 +23,8 @@ end
   File.expand_path(root)
 end
 
+@@tree : TreeConfig = TreeConfig.from_yaml(File.read(@@yaml_file))
+
 # 3. Expose clean public getter methods
 def yaml_file : String
   @@yaml_file
@@ -30,4 +32,8 @@ end
 
 def target_root : String
   @@target_root
+end
+
+def tree
+  @@tree
 end

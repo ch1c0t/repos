@@ -27,12 +27,23 @@ alias ProfileMapping = Hash(String, RepositoryMapping)
 alias RepositoryMapping = Hash(String, Nil)
 
 
-def sync_tree(config : TreeConfig, target_root : String)
-  config.each do |platform, profiles|
+def build
+  puts "Building..."
+end
+
+
+def sync
+  sync_tree
+  puts "🎉 Tree reconstruction and updates complete!"
+end
+
+
+def sync_tree
+  Config.tree.each do |platform, profiles|
     profiles.each do |username, repositories|
       
       # Build profile target directory
-      profile_path = File.join(target_root, platform, username)
+      profile_path = File.join(Config.target_root, platform, username)
       Dir.mkdir_p(profile_path)
       puts "📁 Profile directory: #{profile_path}"
 
@@ -53,14 +64,21 @@ require "../config"
 require "../repository"
 
 begin
-  puts "anew"
   puts "📖 Reading configuration from: #{Config.yaml_file}"
   puts "🚀 Target root directory: #{Config.target_root}"
 
-  tree_config = TreeConfig.from_yaml(File.read(Config.yaml_file))
-  sync_tree(tree_config, Config.target_root)
-
-  puts "🎉 Tree reconstruction and updates complete!"
+  case ARGV.size
+  when 0
+    sync
+    build
+  when 1
+    case ARGV[0]
+    when "sync"
+      sync
+    when "build"
+      build
+    end
+  end
 rescue e : Exception
   STDERR.puts "An error occurred: #{e.message}"
   exit 1
