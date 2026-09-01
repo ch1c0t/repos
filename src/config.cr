@@ -38,4 +38,16 @@ module Config
   def tree
     @@tree
   end
+  
+  def each_project_path
+    Config.tree.each do |platform, profiles|
+      profiles.each do |username, repositories|
+        profile_path = File.join(Config.target_root, platform, username)
+  
+        repositories.each_key do |repo_name|
+          yield Path.new "#{profile_path}/#{repo_name}"
+        end
+      end
+    end
+  end
 end

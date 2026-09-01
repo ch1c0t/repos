@@ -16,4 +16,6 @@ def sync_tree
 
     end
   end
+
+  puts "🎉 Tree reconstruction and updates complete!"
 end

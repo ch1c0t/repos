@@ -27,14 +27,10 @@ alias ProfileMapping = Hash(String, RepositoryMapping)
 alias RepositoryMapping = Hash(String, Nil)
 
 
-def build
-  puts "Building..."
-end
-
-
-def sync
-  sync_tree
-  puts "🎉 Tree reconstruction and updates complete!"
+def build_projects
+  puts "\nStarting to build projects..."
+  Workspace.new.process
+  puts "\n🎉 Workspace execution complete!"
 end
 
 
@@ -56,12 +52,15 @@ def sync_tree
 
     end
   end
+
+  puts "🎉 Tree reconstruction and updates complete!"
 end
 
 require "yaml"
 
 require "../config"
 require "../repository"
+require "../workspace"
 
 begin
   puts "📖 Reading configuration from: #{Config.yaml_file}"
@@ -69,14 +68,14 @@ begin
 
   case ARGV.size
   when 0
-    sync
-    build
+    sync_tree
+    build_projects
   when 1
     case ARGV[0]
     when "sync"
-      sync
+      sync_tree
     when "build"
-      build
+      build_projects
     end
   end
 rescue e : Exception
