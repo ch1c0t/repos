@@ -1,5 +1,5 @@
 # Checks if the binaries inside bin/ are newer than the latest git commit
-private def up_to_date? : Bool
+def up_to_date? : Bool
   bin_dir = @path / "bin"
   return false unless Dir.exists?(bin_dir)
 

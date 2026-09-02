@@ -84,7 +84,7 @@ class Workspace
   
     module UpToDate
       # Checks if the binaries inside bin/ are newer than the latest git commit
-      private def up_to_date? : Bool
+      def up_to_date? : Bool
         bin_dir = @path / "bin"
         return false unless Dir.exists?(bin_dir)
       
@@ -208,6 +208,30 @@ class Workspace
         puts "❌ 'npm install --global .' failed"
         false
       end
+    end
+    
+    # Overrides the base class timestamp logic specifically for Node.js workflows
+    def up_to_date? : Bool
+      node_modules = @path / "node_modules"
+      lock_file = @path / "package-lock.json"
+    
+      # Find a valid reference target to check (prefer node_modules, fall back to lockfile)
+      target_path = if Dir.exists?(node_modules)
+                      node_modules
+                    elsif File.exists?(lock_file)
+                      lock_file
+                    else
+                      return false # Neither exists, needs a fresh install
+                    end
+    
+      # Get the modification time of our chosen Node target
+      node_target_time = File.info(target_path).modification_time.to_unix
+    
+      last_commit_time = get_last_commit_timestamp
+      return false if last_commit_time.nil?
+    
+      # If node_modules or package-lock.json was modified after the last commit, it's up to date
+      node_target_time >= last_commit_time
     end
   end
 end
