@@ -1,5 +1,7 @@
 def self.detect?(path : Path) : Bool
-  File.exists?(path / "shard.yml") && File.exists?(path / "Gemfile")
+  File.exists?(path / "shard.yml") &&
+    File.exists?(path / "Gemfile") &&
+    Dir.exists?(path / "bgem")
 end
 
 def build : Bool

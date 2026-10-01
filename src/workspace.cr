@@ -162,7 +162,9 @@ class Workspace
 
   class CrystalBgemProject < Project
     def self.detect?(path : Path) : Bool
-      File.exists?(path / "shard.yml") && File.exists?(path / "Gemfile")
+      File.exists?(path / "shard.yml") &&
+        File.exists?(path / "Gemfile") &&
+        Dir.exists?(path / "bgem")
     end
     
     def build : Bool
@@ -179,6 +181,23 @@ class Workspace
         true
       else
         puts "❌ 'bundle exec rake' failed"
+        false
+      end
+    end
+  end
+
+  class CrystalShardProject < Project
+    def self.detect?(path : Path) : Bool
+      File.exists?(path / "shard.yml")
+    end
+    
+    def build : Bool
+      puts "💎 Identified as a Crystal project using 'shards build'"
+      if run_cmd("shards", ["build"])
+        puts "✅ Build successful"
+        true
+      else
+        puts "❌ 'shards build' failed"
         false
       end
     end
